@@ -1,0 +1,50 @@
+@using Models
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+
+@page "/MatrixReviewer/{RowsA}/{ColumnsA}/{RowsB}"
+
+<h3>MatrixReviewer @RowsB</h3>
+
+<EditForm Model="@starship" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <table>
+        <tr>
+            <td>
+                <label for="identifier">Identifier: </label>
+                <InputText id="identifier" @bind-Value="starship.Classification[0,0]" />
+            </td>
+            <td>
+                <label for="identifier1">Identifier: </label>
+                <InputText id="identifier1" @bind-Value="starship.Classification[0,1]" />
+            </td>
+            <td>
+                <label for="identifier2">Identifier: </label>
+                <InputText id="identifier2" @bind-Value="starship.Classification[0,2]" />
+            </td>
+        </tr>
+    </table>
+</EditForm>
+
+@code {
+    private MatrixSelectorModel starship = new MatrixSelectorModel() { Classification = new string[5,5] };
+
+[Parameter]
+public string RowsA { get; set; }
+
+[Parameter]
+public string ColumnsA { get; set; }
+
+[Parameter]
+public string RowsB { get; set; }
+
+private void HandleValidSubmit()
+{
+    Console.WriteLine("OnValidSubmit");
+}
+
+protected override void OnInit()
+{
+}
+}

@@ -1,0 +1,72 @@
+﻿@using Models
+@inject Microsoft.AspNetCore.Components.IUriHelper UriHelper
+
+@inject Services.Interfaces.IMatrixService SelectorMatrixService
+@page "/MatrixSelectorForm"
+
+<h1>Matrix Multiplier</h1>
+@if (MatrixModelA != null && MatrixModelB != null)
+{
+    <h2>Current Matrix Dimensions Selected</h2>
+    <h4>Matrix A</h4>
+    <p>Rows: @MatrixModelA.Rows</p>
+    <p>Columns: @MatrixModelA.Columns</p>
+
+    <h4>Matrix B</h4>
+    <p>Rows: @MatrixModelB.Rows</p>
+    <p>Columns: @MatrixModelB.Columns</p>
+}
+
+<EditForm Model="@starship" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label for="rows-a">Matrix A Rows: </label>
+        <InputNumber id="rows-a" @bind-Value="starship.RowsA">
+        </InputNumber>
+    </p>
+    <p>
+        <label for="columns-a">Matrix A Columns: </label>
+        <InputNumber id="columns-a" @bind-Value="starship.ColumnsA">
+        </InputNumber>
+    </p>
+    <p>
+        <label for="rows-b">Matrix B Rows: </label>
+        <InputNumber id="rows-b" @bind-Value="starship.RowsB">
+        </InputNumber>
+    </p>
+    
+    <p>
+        <label for="accommodation">Maximum Accommodation: </label>
+        <InputNumber id="accommodation" @bind-Value="starship.MaximumAccommodation" />
+    </p>
+    <p>
+        <label for="valid">Check to Generate Matrix Values: </label>
+        <InputCheckbox id="valid" @bind-Value="starship.IsValidatedDesign" />
+    </p>
+    <p>
+        <label for="productionDate">Production Date: </label>
+        <InputDate Id="productionDate" @bind-Value="starship.ProductionDate" />
+    </p>
+
+    <button type="submit">Submit</button>
+
+    <p>
+        <a href="http://xconcentration.com">&copy;2019 Xconcentration Ltd</a>
+    </p>
+</EditForm>
+
+@code {
+private MatrixSelectorModel starship = new MatrixSelectorModel { RowsA = 3, ColumnsA = 3, RowsB = 3 };
+
+public MatrixModel MatrixModelA { get; set; }
+
+public MatrixModel MatrixModelB { get; set; }
+
+private void HandleValidSubmit()
+{
+    var route = $"/MatrixReviewer/{this.starship.RowsA}/{this.starship.ColumnsA}/{this.starship.RowsB}";
+    this.MatrixModelA = new MatrixModel(this.starship.RowsA, this.starship.RowsB);
+}
+}

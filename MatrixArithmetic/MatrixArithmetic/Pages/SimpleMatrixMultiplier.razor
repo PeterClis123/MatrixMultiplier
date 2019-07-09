@@ -1,0 +1,86 @@
+@using Models
+@inject Services.Interfaces.IMatrixService MatrixService
+@page "/SimpleMatrixMultiplier"
+
+<h3>Simple Matrix Multiplier</h3>
+
+
+<EditForm Model="@matrixMultiplier" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label for="matrix-a">Matrix A: </label>
+        <InputTextArea Id="matrix-a" @bind-Value="matrixMultiplier.CommaSeperatedValuesA" />
+    </p>
+    <p>
+        <label for="matrix-b">Matrix B: </label>
+        <InputTextArea Id="matrix-b" @bind-Value="matrixMultiplier.CommaSeperatedValuesB" />
+    </p>
+    <p>
+        <label for="rows-a">Matrix A Rows: </label>
+        <InputNumber id="rows-a" @bind-Value="matrixMultiplier.RowsA">
+        </InputNumber>
+    </p>
+    <p>
+        <label for="columns-a">Matrix A Columns: </label>
+        <InputNumber id="columns-a" @bind-Value="matrixMultiplier.ColumnsA">
+        </InputNumber>
+    </p>
+    <p>
+        <label for="rows-b">Matrix B Rows: </label>
+        <InputNumber id="rows-b" @bind-Value="matrixMultiplier.RowsB">
+        </InputNumber>
+    </p>
+
+
+    <button type="submit">Submit</button>
+
+    <p>
+        <a href="http://xconcentration.com">&copy;2019 Xconcentration Ltd</a>
+    </p>
+    @for (int i = 0; i < MatrixResultModel?.Rows; i++)
+    {
+        <p>
+            @for (int j = 0; j < MatrixResultModel.Rows; j++)
+            {
+            <span>@this.MatrixResultModel[i, j]</span>
+            }
+        </p>
+    }
+
+</EditForm>
+
+
+
+@code {
+
+private SimpleMatrixMultiplierModel matrixMultiplier = new SimpleMatrixMultiplierModel();
+public MatrixModel MatrixBModel { get; set; }
+public MatrixModel MatrixAModel { get; set; }
+public MatrixModel MatrixResultModel { get; set; }
+public string[] MatrixAValues { get; set; }
+public string[] MatrixBValues { get; set; }
+
+
+private void HandleValidSubmit()
+{
+    Console.WriteLine(this.matrixMultiplier.CommaSeperatedValuesA);
+    Console.WriteLine(this.matrixMultiplier.CommaSeperatedValuesB);
+    this.MatrixAValues = this.matrixMultiplier.CommaSeperatedValuesA.Split(',');
+    this.MatrixBValues = this.matrixMultiplier.CommaSeperatedValuesB.Split(',');
+    this.MatrixAModel = this.MatrixService.Populate(matrixMultiplier.RowsA, matrixMultiplier.ColumnsA, this.MatrixAValues);
+    this.MatrixBModel = this.MatrixService.Populate(matrixMultiplier.RowsA, matrixMultiplier.ColumnsA, this.MatrixBValues);
+    this.MatrixResultModel = this.MatrixService.NormalMultiply(this.MatrixAModel, this.MatrixBModel);
+    for (int i = 0; i < MatrixResultModel.Rows; i++)
+    {
+
+        for (int j = 0; j < MatrixResultModel.Rows; j++)
+        {
+            Console.WriteLine(string.Format("{0}, ", MatrixResultModel[i, j]));
+            Console.WriteLine("Check one");
+        }
+    }
+    this.StateHasChanged();
+}
+}
